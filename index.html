@@ -5,347 +5,199 @@
 <title>Nasdaq Exchange</title>
 
 <style>
-body{
-margin:0;
-font-family:Arial;
-background:linear-gradient(180deg,#0b0e11,#101820);
-color:white;
+body {
+  margin:0;
+  font-family: Arial;
+  background:#0b0e11;
+  color:white;
 }
 
-/* WATERMARK */
-body::before{
-content:"NASDAQ";
-position:fixed;
-top:50%;
-left:50%;
-transform:translate(-50%,-50%);
-font-size:70px;
-color:rgba(255,255,255,0.03);
+.header {
+  padding:15px;
+  font-size:20px;
+  font-weight:bold;
 }
 
-/* SPLASH */
-#splash{
-position:fixed;
-width:100%;
-height:100%;
-background:black;
-display:flex;
-justify-content:center;
-align-items:center;
-font-size:25px;
-z-index:999;
+.box {
+  background:#111;
+  margin:10px;
+  padding:15px;
+  border-radius:12px;
 }
 
-/* HEADER */
-.header{
-padding:15px;
-text-align:center;
-font-size:20px;
-font-weight:bold;
+button {
+  background:#fcd535;
+  border:none;
+  padding:8px 12px;
+  border-radius:6px;
+  margin:3px;
 }
 
-/* PAGE */
-.page{display:none;padding:15px;}
-.active{display:block;}
-
-/* CARD */
-.card{
-background:#161a1e;
-padding:15px;
-border-radius:12px;
-margin:10px 0;
+.bottom {
+  position:fixed;
+  bottom:0;
+  width:100%;
+  display:flex;
+  justify-content:space-around;
+  background:#111;
+  padding:10px;
 }
 
-/* BUTTON */
-.btn{
-background:#f0b90b;
-padding:10px;
-border:none;
-margin:5px;
-border-radius:6px;
-color:black;
+.coin {
+  display:flex;
+  justify-content:space-between;
+  margin:8px 0;
 }
 
-/* COIN */
-.coin{
-display:flex;
-justify-content:space-between;
-padding:10px;
-border-bottom:1px solid #333;
-transition:0.3s;
-}
-.coin:hover{
-transform:scale(1.03);
-background:#1e2a3a;
-}
-
-/* NAV */
-.nav{
-position:fixed;
-bottom:0;
-width:100%;
-display:flex;
-background:#111;
-}
-.nav button{
-flex:1;
-padding:12px;
-border:none;
-background:#111;
-color:white;
-}
-
-/* INPUT */
-input{
-width:90%;
-padding:10px;
-margin:5px;
-}
 </style>
 </head>
 
 <body>
 
-<div id="splash">🚀 Nasdaq Exchange</div>
-
-<div class="header">
-📊 Nasdaq Exchange
-<select onchange="setLang(this.value)">
-<option value="english">EN</option>
-<option value="urdu">UR</option>
-<option value="hindi">HI</option>
-</select>
-</div>
-
-<!-- LOGIN -->
-<div id="login" class="page active">
-<div class="card">
-<h3>Login / Signup</h3>
-<input id="user" placeholder="Username"><br>
-<input id="pass" type="password" placeholder="Password"><br>
-<button class="btn" onclick="signup()">Signup</button>
-<button class="btn" onclick="login()">Login</button>
-</div>
-</div>
+<div class="header">📊 Nasdaq Exchange</div>
 
 <!-- HOME -->
-<div id="home" class="page">
-<div class="card">
-<h2>Balance: $<span id="balance">1000</span></h2>
-</div>
+<div id="home">
+  <div class="box">
+    <h2>Total Balance</h2>
+    <h1>$<span id="balance">1060</span></h1>
+    <button onclick="deposit()">Add Funds</button>
+  </div>
 
-<div class="card">
-<h3>🔥 Live Activity</h3>
-<div id="activity"></div>
-</div>
+  <div class="box">
+    <h3>🔥 Hot Coins</h3>
+    <div id="hotCoins"></div>
+  </div>
 </div>
 
 <!-- MARKET -->
-<div id="market" class="page">
-
-<input id="search" placeholder="Search coin..." onkeyup="searchCoin()">
-
-<div class="card">
-<iframe id="chart"
-src="https://s.tradingview.com/widgetembed/?symbol=BINANCE:BTCUSDT&interval=1&theme=dark"
-width="100%" height="300"></iframe>
+<div id="market" style="display:none">
+  <div class="box">
+    <h3>📈 Market</h3>
+    <div id="coinList"></div>
+  </div>
 </div>
 
-<div id="coins"></div>
+<!-- ASSET -->
+<div id="asset" style="display:none">
+  <div class="box">
+    <h3>Balance: $<span id="balance2">1060</span></h3>
+    <button onclick="deposit()">Deposit</button>
+    <button onclick="withdraw()">Withdraw</button>
+  </div>
 
-</div>
-
-<!-- ASSETS -->
-<div id="asset" class="page">
-<div class="card">
-<h3>Wallet: $<span id="bal2">1000</span></h3>
-
-<button class="btn" onclick="deposit()">Deposit</button>
-<button class="btn" onclick="withdraw()">Withdraw</button>
-
-<div id="walletBox" style="display:none;">
-<input id="wallet" placeholder="Enter TRC20 Wallet">
-<button class="btn" onclick="saveWallet()">Submit</button>
-</div>
-
-</div>
+  <div class="box">
+    <h3>🔥 Activity</h3>
+    <div id="activity"></div>
+  </div>
 </div>
 
 <!-- SUPPORT -->
-<div id="support" class="page">
-<div class="card">
-<h3>Customer Support</h3>
-<button class="btn" onclick="contact()">Telegram</button>
-</div>
+<div id="support" style="display:none">
+  <div class="box">
+    <h3>Support</h3>
+    <button onclick="contact()">Contact Support</button>
+  </div>
 </div>
 
-<!-- NAV -->
-<div class="nav">
-<button onclick="show('home')">Home</button>
-<button onclick="show('market')">Market</button>
-<button onclick="show('asset')">Assets</button>
-<button onclick="show('support')">Support</button>
+<!-- BOTTOM NAV -->
+<div class="bottom">
+  <button onclick="showPage('home')">Home</button>
+  <button onclick="showPage('market')">Market</button>
+  <button onclick="showPage('asset')">Assets</button>
+  <button onclick="showPage('support')">Support</button>
 </div>
 
 <script>
 
-// SPLASH
-setTimeout(()=>{document.getElementById("splash").style.display="none";},2000);
-
-// LOGIN
-function signup(){
-let u=user.value,p=pass.value;
-if(!u||!p)return alert("Fill all fields");
-localStorage.setItem(u,p);
-alert("Signup success");
-}
-
-function login(){
-let u=user.value,p=pass.value;
-if(localStorage.getItem(u)==p){
-show("home");
-notify("Login successful 🚀");
-}else{
-alert("Wrong login ❌");
-}
-}
-
-// NAV
-function show(id){
-document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
-document.getElementById(id).classList.add("active");
-}
-
-// NOTIFY
-function notify(msg){
-let div=document.createElement("div");
-div.innerText=msg;
-div.style.position="fixed";
-div.style.bottom="80px";
-div.style.right="10px";
-div.style.background="#00c2ff";
-div.style.padding="10px";
-div.style.borderRadius="5px";
-document.body.appendChild(div);
-setTimeout(()=>div.remove(),3000);
-}
-
-// LANGUAGE
-function setLang(l){
-notify("Language: "+l);
-}
-
-// MARKET
-let coinNames=["BTC","ETH","BNB","XRP","SOL","ADA","DOGE","DOT"];
-
-function loadCoins(){
-let html="";
-for(let i=0;i<100;i++){
-let coin=coinNames[i%coinNames.length];
-let price=(Math.random()*50000).toFixed(2);
-let change=(Math.random()*10).toFixed(2);
-let green=Math.random()>0.5;
-
-html+=`
-<div class="coin" onclick="changeChart('${coin}')">
-<div>
-<b>${coin}</b><br>$${price}
-</div>
-
-<div style="color:${green?'#00ff88':'#ff4d4d'}">
-${green?'+':'-'}${change}%
-</div>
-
-<div>
-<button class="btn" onclick="buy();event.stopPropagation()">Buy</button>
-<button class="btn" onclick="sell();event.stopPropagation()">Sell</button>
-</div>
-</div>`;
-}
-document.getElementById("coins").innerHTML=html;
-}
-
-function changeChart(symbol){
-document.getElementById("chart").src=
-`https://s.tradingview.com/widgetembed/?symbol=BINANCE:${symbol}USDT&interval=1&theme=dark`;
-}
-
-// SEARCH
-function searchCoin(){
-let input=document.getElementById("search").value.toUpperCase();
-let coins=document.querySelectorAll(".coin");
-
-coins.forEach(c=>{
-let name=c.innerText.toUpperCase();
-c.style.display=name.includes(input)?"flex":"none";
-});
-}
-
-// ACTIONS
-function buy(){
-show("asset");
-notify("Go to deposit to buy coin");
-}
-
-function sell(){
-contact();
+// NAVIGATION
+function showPage(page){
+  ["home","market","asset","support"].forEach(p=>{
+    document.getElementById(p).style.display="none";
+  });
+  document.getElementById(page).style.display="block";
 }
 
 // WALLET
+let wallet = "TQWTVcqKppmKvx53rdNRbADhRrLb7Gcm";
+
 function deposit(){
-notify("Send USDT to wallet");
+  alert("Send USDT (TRC20) to:\n\n"+wallet);
 }
 
 function withdraw(){
-document.getElementById("walletBox").style.display="block";
+  alert("After proceeding, customer support will contact you 📞");
 }
 
-function saveWallet(){
-notify("Withdrawal request sent. Support will contact you.");
-}
-
-// SUPPORT
 function contact(){
-window.open("https://t.me/raguadmin");
+  alert("Support will contact you soon 📞");
 }
 
-// LIVE ACTIVITY
-let names=["Ali","Ahmed","Sara","Zain","Fatima"];
-let coins=["USDT","BTC","ETH"];
+// HOT COINS
+let hotCoins = ["BTC","ETH","BNB","SOL","DOGE"];
 
-function activity(){
-let n=names[Math.floor(Math.random()*names.length)];
-let c=coins[Math.floor(Math.random()*coins.length)];
-let amt=(Math.random()*2000).toFixed(0);
-let type=Math.random()>0.5?"deposited":"withdrew";
-
-let msg=`${n} ${type} $${amt} ${c}`;
-
-let box=document.getElementById("activity");
-let div=document.createElement("div");
-div.innerText=msg;
-div.style.color=type=="deposited"?"#00ff88":"#ff4d4d";
-box.prepend(div);
-
-if(box.children.length>6){
-box.removeChild(box.lastChild);
+function loadHotCoins(){
+  let box=document.getElementById("hotCoins");
+  box.innerHTML="";
+  hotCoins.forEach(c=>{
+    let price=(Math.random()*50000).toFixed(2);
+    box.innerHTML+=`
+    <div class="coin">
+      ${c}/USDT - $${price}
+      <button onclick="buy()">Buy</button>
+    </div>`;
+  });
 }
+loadHotCoins();
+
+// MARKET (100 coins)
+let coins=[];
+for(let i=1;i<=100;i++){
+  coins.push("COIN"+i);
 }
 
-// AUTO RUN
-setInterval(activity,2500);
-setInterval(loadCoins,4000);
+function loadMarket(){
+  let list=document.getElementById("coinList");
+  list.innerHTML="";
+  coins.forEach(c=>{
+    let price=(Math.random()*100).toFixed(3);
+    list.innerHTML+=`
+    <div class="coin">
+      ${c}/USDT - $${price}
+      <div>
+        <button onclick="buy()">Buy</button>
+        <button onclick="sell()">Sell</button>
+      </div>
+    </div>`;
+  });
+}
+loadMarket();
 
-// BALANCE GROW
+function buy(){
+  alert("Send payment to TRC20 wallet:\n\n"+wallet);
+}
+
+function sell(){
+  alert("Contact support to sell 📞");
+}
+
+// ACTIVITY (LIVE FEEL)
 setInterval(()=>{
-let b=document.getElementById("balance");
-let val=parseInt(b.innerText);
-val+=Math.floor(Math.random()*5);
-b.innerText=val;
-document.getElementById("bal2").innerText=val;
-},5000);
+  let users=["Zain","Ahmed","Sara","Ali"];
+  let coins=["BTC","ETH","USDT"];
 
-loadCoins();
+  let name=users[Math.floor(Math.random()*users.length)];
+  let coin=coins[Math.floor(Math.random()*coins.length)];
+  let amount=Math.floor(Math.random()*2000);
+
+  let type=Math.random()>0.5?"deposited":"withdrew";
+  let color=type==="deposited"?"lime":"red";
+
+  document.getElementById("activity").innerHTML=
+  `<p style="color:${color}">${name} ${type} $${amount} ${coin}</p>`
+  +document.getElementById("activity").innerHTML;
+
+},3000);
 
 </script>
 

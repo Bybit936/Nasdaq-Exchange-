@@ -6,275 +6,169 @@
 
 <style>
 body{margin:0;font-family:Arial;background:#0b0e11;color:white;}
-
-.header{
-padding:15px;
-font-size:22px;
-font-weight:bold;
-text-align:center;
-}
-
-.box{
-background:#161a1e;
-margin:12px;
-padding:18px;
-border-radius:12px;
-box-shadow:0 0 10px rgba(0,0,0,0.4);
-}
-
-button{
-background:#fcd535;
-border:none;
-padding:10px;
-border-radius:6px;
-font-weight:bold;
-margin:3px;
-}
-
-.coin{
-display:flex;
-justify-content:space-between;
-padding:10px;
-border-bottom:1px solid #222;
-}
-
-.bottom{
-position:fixed;
-bottom:0;
-width:100%;
-display:flex;
-background:#111;
-border-top:1px solid #222;
-}
-
-.bottom button{
-flex:1;
-padding:12px;
-color:white;
-background:#111;
-}
-
-input{width:90%;padding:8px;margin:5px;}
+.header{padding:15px;font-size:22px;font-weight:bold;text-align:center;}
+.card{background:#161a1e;margin:12px;padding:15px;border-radius:12px;}
+.btn{background:#fcd535;border:none;padding:8px 12px;border-radius:6px;margin:3px;}
+.coin{display:flex;justify-content:space-between;padding:10px;border-bottom:1px solid #222;}
+.nav{position:fixed;bottom:0;width:100%;display:flex;background:#111;}
+.nav div{flex:1;text-align:center;padding:10px;}
+.page{display:none;}
+.active{display:block;}
 </style>
-</head>
 
+</head>
 <body>
 
 <div class="header">📊 Nasdaq Exchange</div>
 
-<!-- AUTH -->
-<div id="auth">
-<div class="box">
+<!-- LOGIN -->
+<div id="login" class="page active">
+<div class="card">
 <h3>Login / Signup</h3>
-<input id="user" placeholder="Username"><br>
-<input id="pass" type="password" placeholder="Password"><br>
-<button onclick="signup()">Signup</button>
-<button onclick="login()">Login</button>
+<input id="user" placeholder="Username"><br><br>
+<input id="pass" type="password" placeholder="Password"><br><br>
+<input id="ref" placeholder="Referral Code"><br><br>
+
+<button class="btn" onclick="signup()">Signup</button>
+<button class="btn" onclick="login()">Login</button>
 </div>
 </div>
 
 <!-- HOME -->
-<div id="home" style="display:none">
-<div class="box">
-<h2>Balance: $<span id="balance">1000</span></h2>
-<button onclick="buy()">Add Funds</button>
-<button onclick="adminAdd()">+ Admin Add</button>
-<button onclick="adminRemove()">- Admin Remove</button>
-</div>
-
-<div class="box">
-<h3>🔥 Hot Coins</h3>
-<div id="hotCoins"></div>
+<div id="home" class="page">
+<div class="card">
+<h2 id="bal">Balance: $1000</h2>
+<button class="btn" onclick="buy()">Deposit</button>
+<button class="btn" onclick="adminAdd()">+ Admin Add</button>
+<button class="btn" onclick="adminRemove()">- Admin Remove</button>
 </div>
 </div>
 
 <!-- MARKET -->
-<div id="market" style="display:none">
-<div class="box">
-<iframe id="chart"
-src="https://s.tradingview.com/widgetembed/?symbol=BINANCE:BTCUSDT&theme=dark"
-width="100%" height="250"></iframe>
-</div>
-<div class="box" id="coinList"></div>
-</div>
-
-<!-- ASSET -->
-<div id="asset" style="display:none">
-<div class="box">
-<h3>Balance: $<span id="balance2">1000</span></h3>
-<button onclick="buy()">Deposit</button>
-<button onclick="withdraw()">Withdraw</button>
-</div>
-
-<div class="box">
-<h3>🔥 Activity</h3>
-<div id="activity"></div>
+<div id="market" class="page">
+<div class="card">
+<h3>Market</h3>
+<div id="coinList"></div>
 </div>
 </div>
 
-<!-- SUPPORT -->
-<div id="support" style="display:none">
-<div class="box">
-<h3>Customer Support</h3>
-<button onclick="contact()">Telegram</button>
+<!-- ASSETS -->
+<div id="assets" class="page">
+<div class="card">
+<h3>Your Assets</h3>
+<p id="bal2">$1000</p>
+<button class="btn" onclick="buy()">Deposit</button>
+<button class="btn" onclick="sell()">Withdraw</button>
 </div>
 </div>
 
 <!-- NAV -->
-<div class="bottom">
-<button onclick="showPage('home')">Home</button>
-<button onclick="showPage('market')">Market</button>
-<button onclick="showPage('asset')">Assets</button>
-<button onclick="showPage('support')">Support</button>
-</div>
-
-<!-- WALLET POPUP -->
-<div id="walletPopup" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:#000000cc;">
-<div style="background:#111;margin:50px;padding:20px;border-radius:10px;text-align:center;">
-<h3>Deposit USDT (TRC20)</h3>
-<img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=TQWTVcqKppmKvx53rdNRbADhRrLbft7Gcm">
-<p id="walletText">TQWTVcqKppmKvx53rdNRbADhRrLbft7Gcm</p>
-<button onclick="copyWallet()">Copy</button>
-<button onclick="closeWallet()">Close</button>
-</div>
+<div class="nav">
+<div onclick="show('home')">Home</div>
+<div onclick="show('market')">Market</div>
+<div onclick="show('assets')">Assets</div>
 </div>
 
 <script>
 
-// USERS SYSTEM
+// NAV
+function show(p){
+document.querySelectorAll(".page").forEach(x=>x.classList.remove("active"));
+document.getElementById(p).classList.add("active");
+}
+
+// USERS
 let users = JSON.parse(localStorage.getItem("users")) || {};
-let adminUser = "admin";
+let adminUser="admin";
 
 // SIGNUP
 function signup(){
-let u=user.value.trim(),p=pass.value.trim();
+let u=user.value.trim();
+let p=pass.value.trim();
+let r=ref.value.trim();
+
 if(!u||!p)return alert("Fill fields");
-if(users[u])return alert("User exists");
-users[u]=p;
+
+let bal=1000;
+if(r==="@Ganjiwan@"){bal+=100;}
+
+users[u]={password:p,balance:bal};
 localStorage.setItem("users",JSON.stringify(users));
+
 alert("Signup success");
 }
 
 // LOGIN
 function login(){
-let u=user.value.trim(),p=pass.value.trim();
+let u=user.value.trim();
+let p=pass.value.trim();
+
 if(!users[u])return alert("User not found");
-if(users[u]!=p)return alert("Wrong password");
+if(users[u].password!==p)return alert("Wrong pass");
+
 localStorage.setItem("loggedUser",u);
-auth.style.display="none";
-showPage("home");
+
+bal.innerText="Balance: $"+users[u].balance;
+bal2.innerText="$"+users[u].balance;
+
+show("home");
 }
 
-// AUTO LOGIN
-window.onload=function(){
-let u=localStorage.getItem("loggedUser");
-if(u){
-auth.style.display="none";
-showPage("home");
-}
-}
-
-// NAVIGATION
-function showPage(p){
-["home","market","asset","support"].forEach(x=>document.getElementById(x).style.display="none");
-document.getElementById(p).style.display="block";
-}
-
-// WALLET
-let wallet="TQWTVcqKppmKvx53rdNRbADhRrLbft7Gcm";
-
-function buy(){ walletPopup.style.display="block"; }
-function closeWallet(){ walletPopup.style.display="none"; }
-function copyWallet(){
-navigator.clipboard.writeText(wallet);
-alert("Copied ✅");
-}
-
-function withdraw(){
-alert("Support will contact you 📞");
-}
-
-// ADMIN CONTROL
+// ADMIN
 function adminAdd(){
-let u = localStorage.getItem("loggedUser");
-if(u !== adminUser) return alert("Only admin ❌");
-let amt = prompt("Amount");
-balance.innerText = parseInt(balance.innerText)+parseInt(amt);
-balance2.innerText = balance.innerText;
+let u=localStorage.getItem("loggedUser");
+if(u!==adminUser)return alert("Only admin");
+
+let amt=parseInt(prompt("Amount"));
+users[u].balance+=amt;
+update(u);
 }
 
 function adminRemove(){
-let u = localStorage.getItem("loggedUser");
-if(u !== adminUser) return alert("Only admin ❌");
-let amt = prompt("Amount");
-balance.innerText = parseInt(balance.innerText)-parseInt(amt);
-balance2.innerText = balance.innerText;
+let u=localStorage.getItem("loggedUser");
+if(u!==adminUser)return alert("Only admin");
+
+let amt=parseInt(prompt("Amount"));
+users[u].balance-=amt;
+update(u);
 }
 
-// SUPPORT
-function contact(){
-window.open("https://t.me/raguadmin");
+function update(u){
+localStorage.setItem("users",JSON.stringify(users));
+bal.innerText="Balance: $"+users[u].balance;
+bal2.innerText="$"+users[u].balance;
 }
 
-// HOT COINS
-let coins=[
-"BTC","ETH","BNB","SOL","XRP","ADA","DOGE","TRX","DOT","MATIC",
-"LTC","SHIB","AVAX","ATOM","LINK","UNI","XLM","ETC","ICP","FIL",
-"APT","ARB","OP","NEAR","ALGO","HBAR","VET","EGLD","SAND","MANA",
-"AAVE","GRT","AXS","THETA","XTZ","EOS","KLAY","FLOW","FTM","CHZ"
-];
+// MARKET API
+async function loadMarket(){
+let res=await fetch("https://api.binance.com/api/v3/ticker/price");
+let data=await res.json();
 
-function loadHot(){
-hotCoins.innerHTML="";
-coins.slice(0,6).forEach(c=>{
-let price=(Math.random()*50000).toFixed(2);
-let change=(Math.random()*10).toFixed(2);
-hotCoins.innerHTML+=`
-<div class="coin">
-${c}/USDT 
-<div style="color:${change>5?'lime':'red'}">+${change}%</div>
-<button onclick="buy()">Buy</button>
-</div>`;
-});
-}
-loadHot();
-
-// MARKET
-function loadMarket(){
 coinList.innerHTML="";
-coins.forEach(c=>{
-let price=(Math.random()*50000).toFixed(2);
+
+data.slice(0,50).forEach(c=>{
+if(c.symbol.endsWith("USDT")){
+let price=(c.price*0.95).toFixed(2);
+
 coinList.innerHTML+=`
-<div class="coin" onclick="changeChart('${c}')">
-${c}/USDT $${price}
-<div>
-<button onclick="buy();event.stopPropagation()">Buy</button>
-<button onclick="sell();event.stopPropagation()">Sell</button>
-</div>
+<div class="coin">
+${c.symbol} $${price}
+<button onclick="buy()">Buy</button>
+<button onclick="sell()">Sell</button>
 </div>`;
+}
 });
 }
 loadMarket();
 
-function changeChart(c){
-chart.src=`https://s.tradingview.com/widgetembed/?symbol=BINANCE:${c}USDT&theme=dark`;
+// WALLET
+function buy(){
+alert("Send USDT to wallet");
 }
 
 function sell(){
-window.open("https://t.me/raguadmin");
+alert("Contact support");
 }
-
-// ACTIVITY
-setInterval(()=>{
-let names=["Ali","Ahmed","Sara","Zain"];
-let coin=["BTC","ETH","USDT"];
-let n=names[Math.floor(Math.random()*4)];
-let c=coin[Math.floor(Math.random()*3)];
-let amt=Math.floor(Math.random()*2000);
-let t=Math.random()>0.5?"deposited":"withdrew";
-let color=t=="deposited"?"lime":"red";
-activity.innerHTML=`<p style="color:${color}">${n} ${t} $${amt} ${c}</p>`+activity.innerHTML;
-},3000);
 
 </script>
 

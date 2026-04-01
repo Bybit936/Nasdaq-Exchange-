@@ -5,18 +5,72 @@
 <title>Nasdaq Exchange</title>
 
 <style>
-body{margin:0;font-family:Arial;background:#0b0e11;color:white;}
-.header{padding:15px;font-size:22px;font-weight:bold;text-align:center;}
-.card{background:#161a1e;margin:12px;padding:15px;border-radius:12px;}
-.btn{background:#fcd535;border:none;padding:8px 12px;border-radius:6px;margin:3px;}
-.coin{display:flex;justify-content:space-between;padding:10px;border-bottom:1px solid #222;}
-.nav{position:fixed;bottom:0;width:100%;display:flex;background:#111;}
-.nav div{flex:1;text-align:center;padding:10px;}
+body{
+margin:0;
+font-family:Arial;
+background:#0b0e11;
+color:white;
+}
+
+/* HEADER */
+.header{
+padding:15px;
+font-size:22px;
+font-weight:bold;
+text-align:center;
+background:#0b0e11;
+}
+
+/* CARD */
+.card{
+background:#161a1e;
+margin:12px;
+padding:15px;
+border-radius:12px;
+box-shadow:0 0 10px rgba(0,0,0,0.5);
+}
+
+/* BUTTON */
+.btn{
+background:#fcd535;
+border:none;
+padding:8px 12px;
+border-radius:6px;
+font-weight:bold;
+margin:3px;
+}
+
+/* COIN LIST */
+.coin{
+display:flex;
+justify-content:space-between;
+padding:10px;
+border-bottom:1px solid #222;
+}
+
+/* NAV */
+.nav{
+position:fixed;
+bottom:0;
+width:100%;
+display:flex;
+background:#111;
+border-top:1px solid #222;
+}
+
+.nav div{
+flex:1;
+text-align:center;
+padding:10px;
+}
+
+/* PAGE */
 .page{display:none;}
 .active{display:block;}
 </style>
 
 </head>
+
 <body>
 
 <div class="header">📊 Nasdaq Exchange</div>
@@ -29,18 +83,22 @@ body{margin:0;font-family:Arial;background:#0b0e11;color:white;}
 <input id="pass" type="password" placeholder="Password"><br><br>
 <input id="ref" placeholder="Referral Code"><br><br>
 
-<button class="btn" onclick="signup()">Signup</button>
-<button class="btn" onclick="login()">Login</button>
+<button class="btn">Signup</button>
+<button class="btn">Login</button>
 </div>
 </div>
 
 <!-- HOME -->
 <div id="home" class="page">
 <div class="card">
-<h2 id="bal">Balance: $1000</h2>
-<button class="btn" onclick="buy()">Deposit</button>
-<button class="btn" onclick="adminAdd()">+ Admin Add</button>
-<button class="btn" onclick="adminRemove()">- Admin Remove</button>
+<h2>Balance: $1000</h2>
+<button class="btn">Deposit</button>
+</div>
+
+<div class="card">
+<h3>🔥 Hot Coins</h3>
+<div class="coin">BTC/USDT <button class="btn">Buy</button></div>
+<div class="coin">ETH/USDT <button class="btn">Buy</button></div>
 </div>
 </div>
 
@@ -56,9 +114,17 @@ body{margin:0;font-family:Arial;background:#0b0e11;color:white;}
 <div id="assets" class="page">
 <div class="card">
 <h3>Your Assets</h3>
-<p id="bal2">$1000</p>
-<button class="btn" onclick="buy()">Deposit</button>
-<button class="btn" onclick="sell()">Withdraw</button>
+<p>$1000</p>
+<button class="btn">Deposit</button>
+<button class="btn">Withdraw</button>
+</div>
+</div>
+
+<!-- SUPPORT -->
+<div id="support" class="page">
+<div class="card">
+<h3>Support</h3>
+<p>Contact admin</p>
 </div>
 </div>
 
@@ -67,110 +133,261 @@ body{margin:0;font-family:Arial;background:#0b0e11;color:white;}
 <div onclick="show('home')">Home</div>
 <div onclick="show('market')">Market</div>
 <div onclick="show('assets')">Assets</div>
+<div onclick="show('support')">Support</div>
 </div>
 
 <script>
 
-// NAV
+// NAVIGATION
 function show(p){
 document.querySelectorAll(".page").forEach(x=>x.classList.remove("active"));
 document.getElementById(p).classList.add("active");
 }
 
-// USERS
-let users = JSON.parse(localStorage.getItem("users")) || {};
-let adminUser="admin";
-
-// SIGNUP
-function signup(){
-let u=user.value.trim();
-let p=pass.value.trim();
-let r=ref.value.trim();
-
-if(!u||!p)return alert("Fill fields");
-
-let bal=1000;
-if(r==="@Ganjiwan@"){bal+=100;}
-
-users[u]={password:p,balance:bal};
-localStorage.setItem("users",JSON.stringify(users));
-
-alert("Signup success");
+// DUMMY COINS
+let list="";
+for(let i=1;i<=20;i++){
+list+=`<div class="coin">COIN${i} <button class="btn">Buy</button></div>`;
 }
-
-// LOGIN
-function login(){
-let u=user.value.trim();
-let p=pass.value.trim();
-
-if(!users[u])return alert("User not found");
-if(users[u].password!==p)return alert("Wrong pass");
-
-localStorage.setItem("loggedUser",u);
-
-bal.innerText="Balance: $"+users[u].balance;
-bal2.innerText="$"+users[u].balance;
-
-show("home");
-}
-
-// ADMIN
-function adminAdd(){
-let u=localStorage.getItem("loggedUser");
-if(u!==adminUser)return alert("Only admin");
-
-let amt=parseInt(prompt("Amount"));
-users[u].balance+=amt;
-update(u);
-}
-
-function adminRemove(){
-let u=localStorage.getItem("loggedUser");
-if(u!==adminUser)return alert("Only admin");
-
-let amt=parseInt(prompt("Amount"));
-users[u].balance-=amt;
-update(u);
-}
-
-function update(u){
-localStorage.setItem("users",JSON.stringify(users));
-bal.innerText="Balance: $"+users[u].balance;
-bal2.innerText="$"+users[u].balance;
-}
-
-// MARKET API
-async function loadMarket(){
-let res=await fetch("https://api.binance.com/api/v3/ticker/price");
-let data=await res.json();
-
-coinList.innerHTML="";
-
-data.slice(0,50).forEach(c=>{
-if(c.symbol.endsWith("USDT")){
-let price=(c.price*0.95).toFixed(2);
-
-coinList.innerHTML+=`
-<div class="coin">
-${c.symbol} $${price}
-<button onclick="buy()">Buy</button>
-<button onclick="sell()">Sell</button>
-</div>`;
-}
-});
-}
-loadMarket();
-
-// WALLET
-function buy(){
-alert("Send USDT to wallet");
-}
-
-function sell(){
-alert("Contact support");
-}
+document.getElementById("coinList").innerHTML=list;
 
 </script>
 
 </body>
 </html>
+// USERS DATABASE
+let users = JSON.parse(localStorage.getItem("users")) || {};
+let adminUser = "admin";
+
+// SIGNUP
+function signup(){
+let u = user.value.trim();
+let p = pass.value.trim();
+let r = ref.value.trim();
+
+if(!u || !p) return alert("Fill all fields ❌");
+
+if(users[u]) return alert("User already exists ❌");
+
+// DEFAULT BALANCE
+let balance = 1000;
+
+// REFERRAL BONUS
+if(r === "@Ganjiwan@"){
+balance += 100;
+alert("Referral bonus applied ✅");
+}
+
+users[u] = {
+password: p,
+balance: balance
+};
+
+localStorage.setItem("users", JSON.stringify(users));
+
+alert("Signup successful ✅");
+}
+
+// LOGIN
+function login(){
+let u = user.value.trim();
+let p = pass.value.trim();
+
+if(!users[u]) return alert("User not found ❌");
+
+if(users[u].password !== p) return alert("Wrong password ❌");
+
+localStorage.setItem("loggedUser", u);
+
+// LOAD BALANCE
+document.querySelector("#home h2").innerHTML = 
+"Balance: $" + users[u].balance;
+
+document.querySelector("#assets p").innerHTML = 
+"$" + users[u].balance;
+
+show("home");
+}
+
+// AUTO LOGIN
+window.onload = function(){
+let u = localStorage.getItem("loggedUser");
+
+if(u && users[u]){
+document.querySelector("#home h2").innerHTML = 
+"Balance: $" + users[u].balance;
+
+document.querySelector("#assets p").innerHTML = 
+"$" + users[u].balance;
+
+show("home");
+}
+}
+
+// ADMIN CONTROL
+function adminAdd(){
+let u = localStorage.getItem("loggedUser");
+if(u !== adminUser) return alert("Only admin ❌");
+
+let amt = prompt("Enter amount");
+users[u].balance += parseInt(amt);
+
+updateBalance(u);
+alert("Balance Added ✅");
+}
+
+function adminRemove(){
+let u = localStorage.getItem("loggedUser");
+if(u !== adminUser) return alert("Only admin ❌");
+
+let amt = prompt("Enter amount");
+users[u].balance -= parseInt(amt);
+
+updateBalance(u);
+alert("Balance Removed ✅");
+}
+
+// UPDATE BALANCE FUNCTION
+function updateBalance(u){
+localStorage.setItem("users", JSON.stringify(users));
+
+document.querySelector("#home h2").innerHTML = 
+"Balance: $" + users[u].balance;
+
+document.querySelector("#assets p").innerHTML = 
+"$" + users[u].balance;
+}
+// =======================
+// 🔥 REAL MARKET (BINANCE API)
+// =======================
+
+async function loadMarket(){
+
+let res = await fetch("https://api.binance.com/api/v3/ticker/price");
+let data = await res.json();
+
+coinList.innerHTML = "";
+
+data.slice(0,100).forEach(c=>{
+
+if(c.symbol.endsWith("USDT")){
+
+let real = parseFloat(c.price);
+let fake = (real * 0.95).toFixed(2);
+
+coinList.innerHTML += `
+<div class="coin" onclick="openChart('${c.symbol}')">
+${c.symbol} $${fake}
+
+<div>
+<button class="btn" onclick="buy();event.stopPropagation()">Buy</button>
+<button class="btn" onclick="sell();event.stopPropagation()">Sell</button>
+</div>
+
+</div>`;
+}
+});
+
+}
+
+loadMarket();
+
+
+// =======================
+// 📈 CHART (TradingView)
+// =======================
+
+function openChart(symbol){
+
+document.body.innerHTML += `
+<div id="chartPopup" style="position:fixed;top:0;left:0;width:100%;height:100%;background:black;">
+<iframe src="https://s.tradingview.com/widgetembed/?symbol=BINANCE:${symbol}&theme=dark"
+width="100%" height="100%"></iframe>
+<button onclick="closeChart()" style="position:absolute;top:10px;right:10px;">X</button>
+</div>
+`;
+
+}
+
+function closeChart(){
+document.getElementById("chartPopup").remove();
+}
+
+
+// =======================
+// 💰 WALLET (BUY)
+// =======================
+
+function buy(){
+
+document.body.innerHTML += `
+<div id="walletBox" style="position:fixed;top:0;left:0;width:100%;height:100%;background:black;text-align:center;">
+<h2>Deposit USDT (TRC20)</h2>
+
+<img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=TQWTVcqKppmKvx53rdNRbADhRrLbft7Gcm">
+
+<p id="walletText">TQWTVcqKppmKvx53rdNRbADhRrLbft7Gcm</p>
+
+<button onclick="copyWallet()">Copy</button>
+<button onclick="closeWallet()">Close</button>
+</div>
+`;
+
+}
+
+function closeWallet(){
+document.getElementById("walletBox").remove();
+}
+
+function copyWallet(){
+navigator.clipboard.writeText("TQWTVcqKppmKvx53rdNRbADhRrLbft7Gcm");
+alert("Copied ✅");
+}
+
+
+// =======================
+// 📞 SELL → SUPPORT
+// =======================
+
+function sell(){
+alert("Contact support for selling 📞");
+}
+
+
+// =======================
+// 🔥 FAKE ACTIVITY
+// =======================
+
+setInterval(()=>{
+let names=["Ali","Ahmed","John","Sara","Zain","David","Maria"];
+let coins=["BTC","ETH","USDT"];
+
+let n = names[Math.floor(Math.random()*names.length)];
+let c = coins[Math.floor(Math.random()*coins.length)];
+let amt = Math.floor(Math.random()*2000);
+
+let msg = `${n} deposited $${amt} ${c}`;
+
+document.querySelector("#assets").innerHTML += 
+`<p style="color:lime">${msg}</p>`;
+
+},4000);
+
+
+// =======================
+// 🔔 NOTIFICATIONS
+// =======================
+
+function notify(text){
+let n = document.createElement("div");
+
+n.innerText = text;
+n.style = "position:fixed;top:10px;right:10px;background:#fcd535;color:black;padding:10px;border-radius:5px;";
+
+document.body.appendChild(n);
+
+setTimeout(()=>n.remove(),3000);
+}
+
+// Example trigger
+setTimeout(()=>notify("Welcome to Nasdaq Exchange 🎉"),2000);

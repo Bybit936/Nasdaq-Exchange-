@@ -6,16 +6,15 @@
 
 <style>
 body{margin:0;font-family:Arial;background:#0b0e11;color:white;}
-.header{padding:15px;text-align:center;font-weight:bold;}
+.header{padding:15px;text-align:center;font-weight:bold;background:#111;}
 .card{background:#161a1e;margin:10px;padding:15px;border-radius:10px;}
 .btn{background:#fcd535;border:none;padding:8px 12px;border-radius:6px;margin:3px;}
-.coin{display:flex;justify-content:space-between;padding:10px;border-bottom:1px solid #222;}
+.item{display:flex;justify-content:space-between;padding:10px;border-bottom:1px solid #222;}
 .nav{position:fixed;bottom:0;width:100%;display:flex;background:#111;}
 .nav div{flex:1;text-align:center;padding:10px;}
 .page{display:none;}
 .active{display:block;}
 input{width:95%;padding:10px;border:none;border-radius:6px;}
-.popup{position:fixed;top:0;left:0;width:100%;height:100%;background:black;z-index:9999;padding:10px;overflow:auto;}
 </style>
 </head>
 
@@ -49,15 +48,14 @@ input{width:95%;padding:10px;border:none;border-radius:6px;}
 <div id="home" class="page">
 <div class="card">
 <h2 id="bal">Balance: $0</h2>
-<button class="btn" onclick="buyWallet()">Deposit</button>
 </div>
 </div>
 
-<!-- MARKET -->
-<div id="market" class="page">
+<!-- TASKS -->
+<div id="tasks" class="page">
 <div class="card">
-<h3>Market</h3>
-<div id="coinList"></div>
+<h3>Earn Tasks</h3>
+<div id="taskList"></div>
 </div>
 </div>
 
@@ -66,8 +64,6 @@ input{width:95%;padding:10px;border:none;border-radius:6px;}
 <div class="card">
 <h3>Assets</h3>
 <p id="bal2">$0</p>
-<button class="btn" onclick="buyWallet()">Deposit</button>
-<button class="btn" onclick="sell()">Withdraw</button>
 <div id="activity"></div>
 </div>
 </div>
@@ -75,7 +71,7 @@ input{width:95%;padding:10px;border:none;border-radius:6px;}
 <!-- NAV -->
 <div class="nav">
 <div onclick="openPage('home')">🏠</div>
-<div onclick="openPage('market')">📊</div>
+<div onclick="openPage('tasks')">💼</div>
 <div onclick="openPage('assets')">💰</div>
 </div>
 
@@ -160,98 +156,61 @@ update(found);
 show("home");
 }
 
-// UPDATE
+// UPDATE BALANCE
 function update(u){
 bal.innerText="Balance: $"+users[u].balance;
 bal2.innerText="$"+users[u].balance;
 localStorage.setItem("users",JSON.stringify(users));
 }
 
-// MARKET
-async function loadMarket(){
-let res=await fetch("https://api.binance.com/api/v3/ticker/24hr");
-let data=await res.json();
+// TASKS
+let tasks = [
+{title:"Watch Ad", reward:5},
+{title:"Like Product", reward:10},
+{title:"Complete Order", reward:15},
+{title:"Daily Bonus", reward:8},
+{title:"Trade Task", reward:20}
+];
 
-coinList.innerHTML="";
-
-data.slice(0,100).forEach(c=>{
-if(c.symbol.endsWith("USDT")){
-let price=(c.lastPrice*0.95).toFixed(2);
-
-coinList.innerHTML+=`
-<div class="coin" onclick="openChart('${c.symbol}')">
-${c.symbol} $${price}
-<div>
-<button onclick="openChart('${c.symbol}');event.stopPropagation()">Buy</button>
-<button onclick="openChart('${c.symbol}');event.stopPropagation()">Sell</button>
-</div>
+function loadTasks(){
+let html="";
+tasks.forEach((t,i)=>{
+html+=`
+<div class="item">
+${t.title} (+$${t.reward})
+<button class="btn" onclick="completeTask(${i})">Start</button>
 </div>`;
-}
 });
+taskList.innerHTML=html;
 }
-loadMarket();
+loadTasks();
 
-// TRADING SCREEN
-function openChart(symbol){
-let d=document.createElement("div");
-d.className="popup";
-
-d.innerHTML=`
-<h2>${symbol}</h2>
-
-<iframe src="https://s.tradingview.com/widgetembed/?symbol=BINANCE:${symbol}&theme=dark"
-width="100%" height="300"></iframe>
-
-<div style="background:#161a1e;padding:10px;border-radius:10px;">
-<input id="amt" placeholder="Enter amount $"><br><br>
-
-<button class="btn" style="background:lime" onclick="buyCoin('${symbol}')">Buy</button>
-<button class="btn" style="background:red;color:white" onclick="sellCoin('${symbol}')">Sell</button>
-</div>
-
-<br>
-<button class="btn" onclick="closeP()">Close</button>
-`;
-
-document.body.appendChild(d);
-}
-
-function closeP(){
-document.querySelector(".popup").remove();
-}
-
-// BUY
-function buyCoin(symbol){
+// COMPLETE TASK
+function completeTask(i){
 let u=localStorage.getItem("loggedUser");
-let amt=parseFloat(document.getElementById("amt").value);
 
-if(!amt||amt<=0) return alert("Invalid amount");
+let reward=tasks[i].reward;
 
-if(users[u].balance<amt) return alert("Low balance");
+users[u].balance+=reward;
 
-users[u].balance-=amt;
 update(u);
 
-alert(`Bought ${symbol} $${amt}`);
-}
-
-// SELL
-function sellCoin(symbol){
-alert(`Sell request for ${symbol}`);
-}
-
-// WALLET
-function buyWallet(){
-alert("Send USDT (TRC20)");
-}
-
-// FAKE ACTIVITY
+// fake activity
 let names=["Ali (Pakistan)","Rahul (India)","John (USA)","अमित (India)","Sara (UK)"];
-setInterval(()=>{
 let n=names[Math.floor(Math.random()*names.length)];
-let amt=Math.floor(Math.random()*2000);
-activity.innerHTML+=`<p style="color:lime">${n} deposited $${amt}</p>`;
-},3000);
+
+activity.innerHTML+=`<p style="color:lime">${n} earned $${reward}</p>`;
+
+alert(`🎉 You earned $${reward}`);
+}
+
+// FAKE GLOBAL ACTIVITY AUTO
+setInterval(()=>{
+let names=["Ali (Pakistan)","Rahul (India)","John (USA)","अमित (India)","Sara (UK)"];
+let amt=Math.floor(Math.random()*200);
+
+activity.innerHTML+=`<p style="color:orange">${names[Math.floor(Math.random()*names.length)]} earned $${amt}</p>`;
+},4000);
 
 // AUTO LOGIN
 window.onload=function(){

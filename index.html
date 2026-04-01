@@ -5,93 +5,34 @@
 <title>Nasdaq Exchange</title>
 
 <style>
-body{
-margin:0;
-font-family:Arial;
-background:#0b0e11;
-color:white;
-}
-
-/* HEADER */
-.header{
-padding:15px;
-font-size:22px;
-font-weight:bold;
-text-align:center;
-}
-
-/* CARD */
-.card{
-background:#161a1e;
-margin:12px;
-padding:15px;
-border-radius:12px;
-}
-
-/* BUTTON */
-.btn{
-background:#fcd535;
-border:none;
-padding:8px 12px;
-border-radius:6px;
-margin:3px;
-}
-
-/* COIN */
-.coin{
-display:flex;
-justify-content:space-between;
-padding:10px;
-border-bottom:1px solid #222;
-}
-
-/* NAV */
-.nav{
-position:fixed;
-bottom:0;
-width:100%;
-display:flex;
-background:#111;
-}
-
-.nav div{
-flex:1;
-text-align:center;
-padding:10px;
-}
-
-/* PAGE */
+body{margin:0;font-family:system-ui;background:#0b0e11;color:white;max-width:420px;margin:auto;}
+.header{padding:15px;display:flex;justify-content:space-between;font-weight:bold;}
+.card{background:#161a1e;margin:10px;padding:15px;border-radius:12px;}
+.btn{background:#fcd535;border:none;padding:8px 10px;border-radius:8px;margin:2px;}
+.coin{display:flex;justify-content:space-between;padding:12px;background:#161a1e;margin:6px;border-radius:10px;}
+.nav{position:fixed;bottom:0;width:100%;max-width:420px;display:flex;background:#111;}
+.nav div{flex:1;text-align:center;padding:10px;}
 .page{display:none;}
 .active{display:block;}
-
-/* POPUP */
-.popup{
-position:fixed;
-top:0;
-left:0;
-width:100%;
-height:100%;
-background:#000;
-z-index:999;
-padding:20px;
-overflow:auto;
-}
+.popup{position:fixed;top:0;left:0;width:100%;height:100%;background:black;z-index:999;padding:10px;}
+input{width:100%;padding:10px;border:none;border-radius:8px;background:#222;color:white;}
+.skeleton{height:50px;background:#222;margin:5px;border-radius:8px;animation:blink 1s infinite;}
+@keyframes blink{0%{opacity:.5}50%{opacity:1}100%{opacity:.5}}
 </style>
-
 </head>
 
 <body>
 
-<div class="header">📊 Nasdaq Exchange</div>
+<div class="header">📊 Nasdaq Exchange 🔔</div>
 
 <!-- LOGIN -->
 <div id="login" class="page active">
 <div class="card">
-<h3>Login / Signup</h3>
+<input id="email" placeholder="Email"><br><br>
 <input id="user" placeholder="Username"><br><br>
 <input id="pass" type="password" placeholder="Password"><br><br>
+<input id="cpass" type="password" placeholder="Confirm Password"><br><br>
 <input id="ref" placeholder="Referral Code"><br><br>
-
 <button class="btn" onclick="signup()">Signup</button>
 <button class="btn" onclick="login()">Login</button>
 </div>
@@ -102,8 +43,6 @@ overflow:auto;
 <div class="card">
 <h2 id="bal">Balance: $1000</h2>
 <button class="btn" onclick="buy()">Deposit</button>
-<button class="btn" onclick="adminAdd()">+ Admin</button>
-<button class="btn" onclick="adminRemove()">- Admin</button>
 </div>
 
 <div class="card">
@@ -113,31 +52,33 @@ overflow:auto;
 </div>
 
 <!-- MARKET -->
-<div id="market" class="page">
-<div class="card">
-<h3>Market</h3>
-<div id="coinList">Loading...</div>
-</div>
-</div>
+<div id="market" class="page"></div>
 
-<!-- ASSETS -->
-<div id="assets" class="page">
+<!-- ASSET -->
+<div id="asset" class="page">
 <div class="card">
-<h3>Your Assets</h3>
+<h3>Assets</h3>
 <p id="bal2">$1000</p>
 <button class="btn" onclick="buy()">Deposit</button>
 <button class="btn" onclick="sell()">Withdraw</button>
-
-<h4>Live Activity</h4>
 <div id="activity"></div>
+</div>
+</div>
+
+<!-- SUPPORT -->
+<div id="support" class="page">
+<div class="card">
+<h3>Support</h3>
+<p>Contact Admin</p>
 </div>
 </div>
 
 <!-- NAV -->
 <div class="nav">
-<div onclick="show('home')">Home</div>
-<div onclick="show('market')">Market</div>
-<div onclick="show('assets')">Assets</div>
+<div onclick="show('home')">🏠</div>
+<div onclick="show('market')">📊</div>
+<div onclick="show('asset')">💰</div>
+<div onclick="show('support')">📞</div>
 </div>
 
 <script>
@@ -149,140 +90,107 @@ document.getElementById(p).classList.add("active");
 }
 
 // USERS
-let users = JSON.parse(localStorage.getItem("users")) || {};
-let adminUser="admin";
+let users=JSON.parse(localStorage.getItem("users"))||{};
+let admin="Goharjaan";
 
 // SIGNUP
 function signup(){
-let u=user.value.trim();
-let p=pass.value.trim();
-let r=ref.value.trim();
-
-if(!u||!p)return alert("Fill all fields");
+if(pass.value!==cpass.value)return alert("Password mismatch");
+if(users[user.value])return alert("User exists");
 
 let bal=1000;
-if(r==="@Ganjiwan@"){bal+=100;}
+if(ref.value==="@Ganjiwan@")bal+=20;
 
-users[u]={password:p,balance:bal};
+users[user.value]={password:pass.value,balance:bal};
 localStorage.setItem("users",JSON.stringify(users));
 
-alert("Signup success");
+alert("Signup done");
 }
 
 // LOGIN
 function login(){
-let u=user.value.trim();
-let p=pass.value.trim();
+let u=user.value;
+let p=pass.value;
 
 if(!users[u])return alert("User not found");
 if(users[u].password!==p)return alert("Wrong password");
 
-localStorage.setItem("loggedUser",u);
-
+localStorage.setItem("login",u);
 update(u);
 show("home");
-}
-
-// AUTO LOGIN
-window.onload=function(){
-let u=localStorage.getItem("loggedUser");
-if(u && users[u]){
-update(u);
-show("home");
-}
 }
 
 // UPDATE
 function update(u){
-localStorage.setItem("users",JSON.stringify(users));
 bal.innerText="Balance: $"+users[u].balance;
 bal2.innerText="$"+users[u].balance;
 }
 
-// ADMIN
-function adminAdd(){
-let u=localStorage.getItem("loggedUser");
-if(u!=="admin")return alert("Only admin");
-
-let amt=parseInt(prompt("Amount"));
-users[u].balance+=amt;
-update(u);
-}
-
-function adminRemove(){
-let u=localStorage.getItem("loggedUser");
-if(u!=="admin")return alert("Only admin");
-
-let amt=parseInt(prompt("Amount"));
-users[u].balance-=amt;
-update(u);
+// LOADING
+function loading(){
+let h="";
+for(let i=0;i<6;i++){h+=`<div class="skeleton"></div>`;}
+market.innerHTML=h;
 }
 
 // MARKET
-async function loadMarket(){
-let res=await fetch("https://api.binance.com/api/v3/ticker/price");
-let data=await res.json();
+let all=[];
+async function load(){
+loading();
 
-coinList.innerHTML="";
-hot.innerHTML="";
+let r=await fetch("https://api.binance.com/api/v3/ticker/24hr");
+let d=await r.json();
 
-data.slice(0,100).forEach((c,i)=>{
-if(c.symbol.endsWith("USDT")){
-let price=(c.price*0.95).toFixed(2);
+all=d.filter(c=>c.symbol.endsWith("USDT"));
+render(all);
+}
 
-// MARKET
-coinList.innerHTML+=`
-<div class="coin" onclick="openChart('${c.symbol}')">
-${c.symbol} $${price}
-<div>
-<button onclick="buy();event.stopPropagation()">Buy</button>
-<button onclick="sell();event.stopPropagation()">Sell</button>
+// RENDER
+function render(list){
+
+let html=`<input placeholder="Search..." onkeyup="search(this.value)">`;
+
+list.slice(0,200).forEach(c=>{
+let price=(c.lastPrice*0.95).toFixed(2);
+let col=c.priceChangePercent>=0?"lime":"red";
+
+html+=`
+<div class="coin" onclick="chart('${c.symbol}')">
+<div>${c.symbol}<br><small style="color:${col}">${c.priceChangePercent}%</small></div>
+<div>$${price}
+<br>
+<button onclick="event.stopPropagation();buy()">Buy</button>
+<button onclick="event.stopPropagation();sell()">Sell</button>
 </div>
 </div>`;
-
-// HOT COINS
-if(i<5){
-hot.innerHTML+=`
-<div class="coin">
-${c.symbol} $${price}
-<button onclick="buy()">Buy</button>
-</div>`;
-}
-
-}
 });
-}
-loadMarket();
 
-// POPUP
-function createPopup(content){
-let div=document.createElement("div");
-div.className="popup";
-div.innerHTML=content;
-document.body.appendChild(div);
+market.innerHTML=html;
 }
 
-function closePopup(){
-document.querySelector(".popup").remove();
+// SEARCH
+function search(v){
+let f=all.filter(c=>c.symbol.toLowerCase().includes(v.toLowerCase()));
+render(f);
 }
 
-// BUY
-function buy(){
-createPopup(`
-<h2>Deposit USDT (TRC20)</h2>
-
-<img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=TQWTVcqKppmKvx53rdNRbADhRrLbft7Gcm">
-
-<p id="addr">TQWTVcqKppmKvx53rdNRbADhRrLbft7Gcm</p>
-
-<button onclick="copy()">Copy</button>
-<button onclick="closePopup()">Close</button>
+// CHART
+function chart(s){
+popup(`
+<h2>${s}</h2>
+<iframe src="https://s.tradingview.com/widgetembed/?symbol=BINANCE:${s}&theme=dark" width="100%" height="300"></iframe>
+<button onclick="closeP()">Close</button>
 `);
 }
 
-function copy(){
-navigator.clipboard.writeText(addr.innerText);
-alert("Copied");
+// WALLET
+function buy(){
+popup(`
+<h2>TRC20 Wallet</h2>
+<img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=TQWTVcqKppmKvx53rdNRbADhRrLbft7Gcm">
+<p>TQWTVcqKppmKvx53rdNRbADhRrLbft7Gcm</p>
+<button onclick="closeP()">Close</button>
+`);
 }
 
 // SELL
@@ -290,22 +198,24 @@ function sell(){
 alert("Contact support");
 }
 
-// CHART
-function openChart(symbol){
-createPopup(`
-<iframe src="https://s.tradingview.com/widgetembed/?symbol=BINANCE:${symbol}&theme=dark"
-width="100%" height="90%"></iframe>
-
-<button onclick="closePopup()">Close</button>
-`);
+// POPUP
+function popup(c){
+let d=document.createElement("div");
+d.className="popup";
+d.innerHTML=c;
+document.body.appendChild(d);
+}
+function closeP(){
+document.querySelector(".popup").remove();
 }
 
 // ACTIVITY
 setInterval(()=>{
-let names=["Ali","Ahmed","Sara","John","Zain"];
-let msg=names[Math.floor(Math.random()*names.length)]+" deposited $"+Math.floor(Math.random()*2000);
-activity.innerHTML+="<p style='color:lime'>"+msg+"</p>";
+activity.innerHTML+=`<p>Ali deposited $${Math.floor(Math.random()*2000)}</p>`;
 },3000);
+
+// START
+load();
 
 </script>
 

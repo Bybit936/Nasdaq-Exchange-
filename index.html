@@ -337,14 +337,15 @@ function loadMarket() {
 
   coins.forEach(c => {
     let price = (Math.random() * 100).toFixed(2);
-
-    html += `
-      <div style="background:#111; margin:5px; padding:10px; border-radius:8px;">
-        ${c} - $${price}
-        <button onclick="buy('${c}')">Buy</button>
-        <button onclick="sell('${c}')">Sell</button>
-      </div>
-    `;
+html += `
+<div style="background:#111; margin:5px; padding:10px; border-radius:8px; display:flex; justify-content:space-between;">
+  <div>${c} - $${price}</div>
+  <div>
+    <button onclick="buy('${c}')" style="background:green;color:white;">Buy</button>
+    <button onclick="sell('${c}')" style="background:red;color:white;">Sell</button>
+  </div>
+</div>
+`;
   });
 
   document.getElementById("market").innerHTML = html;

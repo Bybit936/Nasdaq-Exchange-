@@ -270,10 +270,11 @@ function verifyOTP() {
     }
 
     let user = {
-      email: document.getElementById("email").value,
-      password: document.getElementById("password").value,
-      balance: balance
-    };
+  name: document.getElementById("name").value,
+  email: document.getElementById("email").value,
+  password: document.getElementById("password").value,
+  balance: balance
+};
 
     localStorage.setItem("user", JSON.stringify(user));
     alert("Signup Successful!");
@@ -292,10 +293,83 @@ function login() {
   if (!saved) return alert("Please signup first");
 
   if (email === saved.email && pass === saved.password) {
-    alert("Login Successful! Balance: $" + saved.balance);
+    showDashboard(saved);
   } else {
     alert("Wrong email or password");
   }
+}
+  function showDashboard(user) {
+  document.body.innerHTML = `
+  <div style="background:#000; color:white; min-height:100vh; padding:15px;">
+
+    <h2>${user.name || "User"}</h2>
+    <p>${user.email}</p>
+
+    <div style="background:#111; padding:15px; border-radius:10px; margin-top:10px;">
+      <h3>Balance: $${user.balance || 0}</h3>
+    </div>
+
+    <div style="margin-top:15px;">
+      <button onclick="deposit()">Deposit</button>
+      <button onclick="withdraw()">Withdraw</button>
+    </div>
+
+    <h3 style="margin-top:20px;">Market</h3>
+    <div id="market"></div>
+
+    <div style="position:fixed; bottom:0; left:0; width:100%; background:#111; display:flex; justify-content:space-around; padding:10px;">
+      <div>🏠 Home</div>
+      <div>📊 Market</div>
+      <div>💼 Asset</div>
+      <div>📞 Support</div>
+    </div>
+
+  </div>
+  `;
+
+  loadMarket();
+}
+
+function loadMarket() {
+  let coins = ["BTC","ETH","BNB","SOL","XRP","ADA","DOGE","TRX","DOT","MATIC"];
+
+  let html = "";
+
+  coins.forEach(c => {
+    let price = (Math.random() * 100).toFixed(2);
+
+    html += `
+      <div style="background:#111; margin:5px; padding:10px; border-radius:8px;">
+        ${c} - $${price}
+        <button onclick="buy('${c}')">Buy</button>
+        <button onclick="sell('${c}')">Sell</button>
+      </div>
+    `;
+  });
+
+  document.getElementById("market").innerHTML = html;
+}
+
+function deposit() {
+  alert("Deposit system coming soon");
+}
+
+function withdraw() {
+  let user = JSON.parse(localStorage.getItem("user"));
+
+  if (user.balance < 20000) {
+    alert("Minimum withdraw is $20000");
+  } else {
+    alert("Withdraw request sent");
+  }
+}
+
+function buy(coin) {
+  alert("Bought " + coin);
+}
+
+function sell(coin) {
+  alert("Sold " + coin);
 }
 </script>
 </body>

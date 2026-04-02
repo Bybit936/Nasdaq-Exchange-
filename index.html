@@ -284,15 +284,16 @@ function verifyOTP() {
     };
 
     let users = JSON.parse(localStorage.getItem("users")) || [];
-users.push(user);
+user.push(user);
 localStorage.setItem("users", JSON.stringify(users));
-    alert("Signup Successful!");
-
-  } else {
-    alert("Wrong OTP");
-  }
-  }
+localStorage.setItem("currentUser", JSON.stringify(user));
+showDashboard(user);
+    } else {
+  alert("Wrong OTP");
 }
+}
+
+ 
 
 function login() {
   let email = document.getElementById("loginEmail").value;
@@ -314,7 +315,8 @@ let saved = users.find(u => u.email === email && u.password === pass);
     <p>${user.email}</p>
 
     <div style="background:#111; padding:15px; border-radius:10px; margin-top:10px;">
-      <h3>Balance: $${user.balance || 0}</h3>
+      
+}/h3>
     </div>
 
     <div style="margin-top:15px;">

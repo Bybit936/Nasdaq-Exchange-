@@ -1,7 +1,9 @@
 <!DOCTYPE html>
 <html>
 <head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Nasdaq Trade</title>
+
 <style>
 body {
   background: #0b0e11;
@@ -9,55 +11,108 @@ body {
   font-family: Arial;
   margin: 0;
 }
+
+/* HEADER */
 header {
   display: flex;
   justify-content: space-between;
-  padding: 20px;
-  background: #0b0e11;
+  align-items: center;
+  padding: 15px;
 }
-a {
-  color: white;
-  margin: 10px;
+
+header h2 {
+  font-size: 20px;
+}
+
+nav a {
+  margin: 8px;
+  font-size: 14px;
   text-decoration: none;
+  color: white;
 }
+
+/* SIGNUP BUTTON STYLE */
+.signup-btn {
+  background: #fcd535;
+  color: black !important;
+  padding: 6px 12px;
+  border-radius: 5px;
+}
+
+/* HERO */
 .hero {
   text-align: center;
-  padding: 120px 20px;
+  padding: 80px 15px;
 }
-button {
-  padding: 12px 25px;
-  margin: 10px;
-  border: none;
-  cursor: pointer;
+
+.hero h1 {
+  font-size: 28px;
+}
+
+.hero p {
   font-size: 16px;
 }
+
+button {
+  padding: 12px 20px;
+  margin: 8px;
+  border: none;
+  cursor: pointer;
+  font-size: 15px;
+  width: 140px;
+}
+
 .signup {
   background: #fcd535;
   color: black;
 }
+
 .login {
   background: #2b3139;
   color: white;
 }
+
+/* FEATURES */
 .features {
   display: flex;
-  justify-content: space-around;
-  padding: 50px;
-  flex-wrap: wrap;
+  flex-direction: column;
+  align-items: center;
+  padding: 30px 10px;
 }
+
 .box {
   background: #1c1f26;
   padding: 20px;
   margin: 10px;
-  width: 200px;
+  width: 90%;
+  max-width: 300px;
   text-align: center;
   border-radius: 10px;
+  font-size: 16px;
 }
+
+/* FOOTER */
 footer {
   text-align: center;
-  padding: 20px;
-  background: #0b0e11;
+  padding: 15px;
   color: gray;
+  font-size: 13px;
+}
+
+/* DESKTOP VERSION */
+@media(min-width:768px) {
+  .hero h1 {
+    font-size: 40px;
+  }
+
+  .features {
+    flex-direction: row;
+    justify-content: center;
+  }
+
+  .box {
+    width: 200px;
+  }
 }
 </style>
 </head>
@@ -66,11 +121,11 @@ footer {
 
 <header>
   <h2>Nasdaq Trade</h2>
-  <div>
+  <nav>
     <a href="#">Markets</a>
     <a href="#">Trade</a>
-    <a href="#">Login</a>
-  </div>
+    <a href="#" class="signup-btn">Sign Up</a>
+  </nav>
 </header>
 
 <section class="hero">
@@ -88,7 +143,7 @@ footer {
 </section>
 
 <footer>
-  <p>© 2026 Nasdaq Trade - All Rights Reserved</p>
+  <p>© 2026 Nasdaq Trade</p>
 </footer>
 
 </body>

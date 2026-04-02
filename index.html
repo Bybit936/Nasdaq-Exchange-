@@ -6,10 +6,10 @@
 
 <style>
 body {
+  margin: 0;
+  font-family: Arial;
   background: #0b0e11;
   color: white;
-  font-family: Arial;
-  margin: 0;
 }
 
 /* HEADER */
@@ -17,21 +17,20 @@ header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 15px;
+  padding: 15px 20px;
 }
 
 header h2 {
-  font-size: 20px;
+  margin: 0;
 }
 
 nav a {
-  margin: 8px;
-  font-size: 14px;
+  margin-left: 15px;
   text-decoration: none;
   color: white;
+  font-size: 14px;
 }
 
-/* SIGNUP BUTTON STYLE */
 .signup-btn {
   background: #fcd535;
   color: black !important;
@@ -39,27 +38,39 @@ nav a {
   border-radius: 5px;
 }
 
-/* HERO */
+/* HERO FULL SCREEN */
 .hero {
-  text-align: center;
-  padding: 80px 15px;
+  min-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
 }
 
 .hero h1 {
-  font-size: 28px;
+  font-size: 32px;
+  text-align: center;
+  margin-bottom: 10px;
 }
 
 .hero p {
   font-size: 16px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.buttons {
+  display: flex;
+  gap: 10px;
 }
 
 button {
-  padding: 12px 20px;
-  margin: 8px;
+  padding: 12px 25px;
   border: none;
   cursor: pointer;
   font-size: 15px;
-  width: 140px;
+  border-radius: 5px;
 }
 
 .signup {
@@ -74,44 +85,36 @@ button {
 
 /* FEATURES */
 .features {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 30px 10px;
+  padding: 40px 20px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
 }
 
 .box {
   background: #1c1f26;
   padding: 20px;
-  margin: 10px;
-  width: 90%;
-  max-width: 300px;
   text-align: center;
   border-radius: 10px;
-  font-size: 16px;
+  font-size: 15px;
 }
 
 /* FOOTER */
 footer {
   text-align: center;
-  padding: 15px;
+  padding: 20px;
   color: gray;
   font-size: 13px;
 }
 
-/* DESKTOP VERSION */
+/* DESKTOP */
 @media(min-width:768px) {
   .hero h1 {
-    font-size: 40px;
+    font-size: 45px;
   }
 
   .features {
-    flex-direction: row;
-    justify-content: center;
-  }
-
-  .box {
-    width: 200px;
+    grid-template-columns: repeat(4, 1fr);
   }
 }
 </style>
@@ -131,8 +134,11 @@ footer {
 <section class="hero">
   <h1>Trusted Crypto Exchange Platform</h1>
   <p>Deposit & Earn Profit Easily</p>
-  <button class="signup">Sign Up</button>
-  <button class="login">Login</button>
+
+  <div class="buttons">
+    <button class="signup">Sign Up</button>
+    <button class="login">Login</button>
+  </div>
 </section>
 
 <section class="features">

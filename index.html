@@ -30,7 +30,7 @@ input {
   border-radius: 5px;
   margin-top: 5px;
   font-weight: bold;
-} cool
+} 
 /* CONTAINER */
 .container {
   max-width: 1100px;
@@ -251,18 +251,25 @@ function sendOTP() {
   if (pass !== confirm) return alert("Password not match");
   if (!terms) return alert("Accept Terms");
 
-  generatedOTP = "1234";
-  alert("OTP: 1234");
+  generatedOTP = Math.floor(1000 + Math.random() * 9000);
+alert("Your OTP: " + generatedOTP);
 
   document.getElementById("otpBox").style.display = "block";
 }
 function verifyOTP() {
   let otp = document.getElementById("otp").value;
-  let ref = document.getElementById("ref").value;
+  let terms = document.getElementById("terms").checked;
+
+  // ✅ Terms check
+  if (!terms) {
+    alert("Please accept Terms");
+    return;
+  }
 
   if (otp == generatedOTP) {
 
     let balance = 0;
+    let ref = document.getElementById("ref").value;
 
     if (ref === "Jasaara@") {
       balance = 20;
@@ -270,17 +277,20 @@ function verifyOTP() {
     }
 
     let user = {
-  name: document.getElementById("name").value,
-  email: document.getElementById("email").value,
-  password: document.getElementById("password").value,
-  balance: balance
-};
+      name: document.getElementById("name").value,
+      email: document.getElementById("email").value,
+      password: document.getElementById("password").value,
+      balance: balance
+    };
 
-    localStorage.setItem("user", JSON.stringify(user));
+    let users = JSON.parse(localStorage.getItem("users")) || [];
+users.push(user);
+localStorage.setItem("users", JSON.stringify(users));
     alert("Signup Successful!");
 
   } else {
     alert("Wrong OTP");
+  }
   }
 }
 
@@ -288,15 +298,13 @@ function login() {
   let email = document.getElementById("loginEmail").value;
   let pass = document.getElementById("loginPass").value;
 
-  let saved = JSON.parse(localStorage.getItem("user"));
+  let users = JSON.parse(localStorage.getItem("users")) || [];
 
-  if (!saved) return alert("Please signup first");
+let saved = users.find(u => u.email === email && u.password === pass);
 
-  if (email === saved.email && pass === saved.password) {
-    showDashboard(saved);
-  } else {
-    alert("Wrong email or password");
-  }
+  if (!saved) return alert("Wrong email or password");
+  localStorage.setItem("currentUser", JSON.stringify(saved));
+  showDashboard(saved);
 }
   function showDashboard(user) {
   document.body.innerHTML = `
@@ -316,7 +324,7 @@ function login() {
 
     <h3 style="margin-top:20px;">Market</h3>
     <div id="market"></div>
-
+    <div id="chartBox" style="margin-top:20px;"></div>
     <div style="position:fixed; bottom:0; left:0; width:100%; background:#111; display:flex; justify-content:space-around; padding:10px;">
       <div>🏠 Home</div>
       <div>📊 Market</div>
@@ -341,7 +349,9 @@ let data = await res.json();
 let price = parseFloat(data.price).toFixed(2);
 html += `
 <div style="background:#111; margin:5px; padding:10px; border-radius:8px; display:flex; justify-content:space-between;">
-  <div>${c} - $${price}</div>
+  <div onclick="openChart('${c}')" style="cursor:pointer;">
+  ${c} - $${price}
+</div>
   <div>
     <button onclick="buy('${c}')" style="background:green;color:white;">Buy</button>
     <button onclick="sell('${c}')" style="background:red;color:white;">Sell</button>
@@ -358,8 +368,7 @@ function deposit() {
 }
 
 function withdraw() {
-  let user = JSON.parse(localStorage.getItem("user"));
-
+  let user = JSON.parse(localStorage.getItem("currentUser"));
   if (user.balance < 20000) {
     alert("Minimum withdraw is $20000");
   } else {
@@ -368,12 +377,41 @@ function withdraw() {
 }
 
 function buy(coin) {
+  let user = JSON.parse(localStorage.getItem("currentUser"));
+
+  if (user.balance < 10) {
+    alert("Not enough balance");
+    return;
+  }
+
+  user.balance -= 10;
+
+  localStorage.setItem("currentUser", JSON.stringify(user));
+
   alert("Bought " + coin);
+showDashboard(user);
+setTimeout(() => openChart(coin), 200);
 }
 
 function sell(coin) {
+  let user = JSON.parse(localStorage.getItem("currentUser"));
+
+  user.balance += 10;
+
+  localStorage.setItem("currentUser", JSON.stringify(user));
+
   alert("Sold " + coin);
+showDashboard(user);
+setTimeout(() => openChart(coin), 200);
 }
+  function openChart(symbol) {
+  document.getElementById("chartBox").innerHTML = `
+    <iframe 
+      src="https://www.tradingview.com/widgetembed/?symbol=BINANCE:${symbol}USDT&interval=15&theme=dark"
+      style="width:100%; height:400px; border:none;">
+    </iframe>
+  `;
+  }
 </script>
 </body>
 </html>

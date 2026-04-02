@@ -330,13 +330,15 @@ function login() {
   loadMarket();
 }
 
-function loadMarket() {
+async function loadMarket() {
   let coins = ["BTC","ETH","BNB","SOL","XRP","ADA","DOGE","TRX","DOT","MATIC"];
 
   let html = "";
 
-  coins.forEach(c => {
-    let price = (Math.random() * 100).toFixed(2);
+  for (let c of coins) {
+    let res = await fetch(`https://api.binance.com/api/v3/ticker/price?symbol=${c}USDT`);
+let data = await res.json();
+let price = parseFloat(data.price).toFixed(2);
 html += `
 <div style="background:#111; margin:5px; padding:10px; border-radius:8px; display:flex; justify-content:space-between;">
   <div>${c} - $${price}</div>

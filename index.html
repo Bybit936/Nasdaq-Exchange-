@@ -256,18 +256,28 @@ function sendOTP() {
 
   document.getElementById("otpBox").style.display = "block";
 }
-
 function verifyOTP() {
   let otp = document.getElementById("otp").value;
+  let ref = document.getElementById("ref").value;
 
   if (otp == generatedOTP) {
+
+    let balance = 0;
+
+    if (ref === "Jasaara@") {
+      balance = 20;
+      alert("Referral bonus added: $20");
+    }
+
     let user = {
       email: document.getElementById("email").value,
-      password: document.getElementById("password").value
+      password: document.getElementById("password").value,
+      balance: balance
     };
 
     localStorage.setItem("user", JSON.stringify(user));
     alert("Signup Successful!");
+
   } else {
     alert("Wrong OTP");
   }
@@ -282,7 +292,7 @@ function login() {
   if (!saved) return alert("Please signup first");
 
   if (email === saved.email && pass === saved.password) {
-    alert("Login Successful!");
+    alert("Login Successful! Balance: $" + saved.balance);
   } else {
     alert("Wrong email or password");
   }

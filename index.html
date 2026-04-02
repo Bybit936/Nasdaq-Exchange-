@@ -1,227 +1,95 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Nasdaq Exchange</title>
-
+<title>Nasdaq Trade</title>
 <style>
-body{margin:0;font-family:Arial;background:#0b0e11;color:white;}
-.header{padding:15px;text-align:center;font-weight:bold;background:#111;}
-.card{background:#161a1e;margin:10px;padding:15px;border-radius:10px;}
-.btn{background:#fcd535;border:none;padding:8px 12px;border-radius:6px;margin:3px;}
-.item{display:flex;justify-content:space-between;padding:10px;border-bottom:1px solid #222;}
-.nav{position:fixed;bottom:0;width:100%;display:flex;background:#111;}
-.nav div{flex:1;text-align:center;padding:10px;}
-.page{display:none;}
-.active{display:block;}
-input{width:95%;padding:10px;border:none;border-radius:6px;}
+body {
+  background: #0b0e11;
+  color: white;
+  font-family: Arial;
+  margin: 0;
+}
+header {
+  display: flex;
+  justify-content: space-between;
+  padding: 20px;
+  background: #0b0e11;
+}
+a {
+  color: white;
+  margin: 10px;
+  text-decoration: none;
+}
+.hero {
+  text-align: center;
+  padding: 120px 20px;
+}
+button {
+  padding: 12px 25px;
+  margin: 10px;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+}
+.signup {
+  background: #fcd535;
+  color: black;
+}
+.login {
+  background: #2b3139;
+  color: white;
+}
+.features {
+  display: flex;
+  justify-content: space-around;
+  padding: 50px;
+  flex-wrap: wrap;
+}
+.box {
+  background: #1c1f26;
+  padding: 20px;
+  margin: 10px;
+  width: 200px;
+  text-align: center;
+  border-radius: 10px;
+}
+footer {
+  text-align: center;
+  padding: 20px;
+  background: #0b0e11;
+  color: gray;
+}
 </style>
 </head>
 
 <body>
 
-<div class="header">📊 Nasdaq Exchange</div>
+<header>
+  <h2>Nasdaq Trade</h2>
+  <div>
+    <a href="#">Markets</a>
+    <a href="#">Trade</a>
+    <a href="#">Login</a>
+  </div>
+</header>
 
-<!-- SIGNUP -->
-<div id="signup" class="page active">
-<div class="card">
-<h3>Create Account</h3>
-<input id="su_user" placeholder="Username"><br><br>
-<input id="su_email" placeholder="Email"><br><br>
-<input id="su_pass" type="password" placeholder="Password"><br><br>
-<input id="su_cpass" type="password" placeholder="Confirm Password"><br><br>
-<button class="btn" onclick="signup()">Signup</button>
-</div>
-</div>
+<section class="hero">
+  <h1>Trusted Crypto Exchange Platform</h1>
+  <p>Deposit & Earn Profit Easily</p>
+  <button class="signup">Sign Up</button>
+  <button class="login">Login</button>
+</section>
 
-<!-- LOGIN -->
-<div id="login" class="page">
-<div class="card">
-<h3>Login</h3>
-<input id="li_user" placeholder="Username / Email"><br><br>
-<input id="li_pass" type="password" placeholder="Password"><br><br>
-<button class="btn" onclick="login()">Login</button>
-</div>
-</div>
+<section class="features">
+  <div class="box">🔒 Secure System</div>
+  <div class="box">⚡ Fast Withdraw</div>
+  <div class="box">📈 High Profit</div>
+  <div class="box">👥 Referral System</div>
+</section>
 
-<!-- HOME -->
-<div id="home" class="page">
-<div class="card">
-<h2 id="bal">Balance: $0</h2>
-</div>
-</div>
-
-<!-- TASKS -->
-<div id="tasks" class="page">
-<div class="card">
-<h3>Earn Tasks</h3>
-<div id="taskList"></div>
-</div>
-</div>
-
-<!-- ASSETS -->
-<div id="assets" class="page">
-<div class="card">
-<h3>Assets</h3>
-<p id="bal2">$0</p>
-<div id="activity"></div>
-</div>
-</div>
-
-<!-- NAV -->
-<div class="nav">
-<div onclick="openPage('home')">🏠</div>
-<div onclick="openPage('tasks')">💼</div>
-<div onclick="openPage('assets')">💰</div>
-</div>
-
-<script>
-
-// USERS
-let users = JSON.parse(localStorage.getItem("users")) || {};
-
-// ADMIN
-if(!users["Goharjaan"]){
-users["Goharjaan"]={
-email:"goharjaanh786@gmail.com",
-password:"goharjaanh786",
-balance:0,
-referralUsed:true,
-isAdmin:true
-};
-localStorage.setItem("users",JSON.stringify(users));
-}
-
-// NAV LOCK
-function openPage(p){
-let u=localStorage.getItem("loggedUser");
-if(!u){alert("Login first ❌");return;}
-show(p);
-}
-
-// PAGE SWITCH
-function show(p){
-document.querySelectorAll(".page").forEach(x=>x.classList.remove("active"));
-document.getElementById(p).classList.add("active");
-}
-
-// SIGNUP
-function signup(){
-let u=su_user.value.trim();
-let e=su_email.value.trim();
-let p=su_pass.value.trim();
-let cp=su_cpass.value.trim();
-
-if(!u||!e||!p||!cp) return alert("Fill all fields");
-if(p!==cp) return alert("Passwords not match");
-if(users[u]) return alert("User exists");
-
-users[u]={email:e,password:p,balance:0,referralUsed:false};
-
-localStorage.setItem("users",JSON.stringify(users));
-
-alert("Account created ✅");
-show("login");
-}
-
-// LOGIN
-function login(){
-let input=li_user.value.trim();
-let p=li_pass.value.trim();
-
-let found=null;
-
-for(let u in users){
-if(u===input||users[u].email===input){
-found=u;
-}
-}
-
-if(!found) return alert("User not found");
-if(users[found].password!==p) return alert("Wrong password");
-
-localStorage.setItem("loggedUser",found);
-
-// referral
-if(!users[found].referralUsed){
-let code=prompt("Enter Referral Code");
-if(code==="@Ganjiwan@"){
-users[found].balance+=20;
-users[found].referralUsed=true;
-alert("$20 bonus added 🎉");
-}
-}
-
-update(found);
-show("home");
-}
-
-// UPDATE BALANCE
-function update(u){
-bal.innerText="Balance: $"+users[u].balance;
-bal2.innerText="$"+users[u].balance;
-localStorage.setItem("users",JSON.stringify(users));
-}
-
-// TASKS
-let tasks = [
-{title:"Watch Ad", reward:5},
-{title:"Like Product", reward:10},
-{title:"Complete Order", reward:15},
-{title:"Daily Bonus", reward:8},
-{title:"Trade Task", reward:20}
-];
-
-function loadTasks(){
-let html="";
-tasks.forEach((t,i)=>{
-html+=`
-<div class="item">
-${t.title} (+$${t.reward})
-<button class="btn" onclick="completeTask(${i})">Start</button>
-</div>`;
-});
-taskList.innerHTML=html;
-}
-loadTasks();
-
-// COMPLETE TASK
-function completeTask(i){
-let u=localStorage.getItem("loggedUser");
-
-let reward=tasks[i].reward;
-
-users[u].balance+=reward;
-
-update(u);
-
-// fake activity
-let names=["Ali (Pakistan)","Rahul (India)","John (USA)","अमित (India)","Sara (UK)"];
-let n=names[Math.floor(Math.random()*names.length)];
-
-activity.innerHTML+=`<p style="color:lime">${n} earned $${reward}</p>`;
-
-alert(`🎉 You earned $${reward}`);
-}
-
-// FAKE GLOBAL ACTIVITY AUTO
-setInterval(()=>{
-let names=["Ali (Pakistan)","Rahul (India)","John (USA)","अमित (India)","Sara (UK)"];
-let amt=Math.floor(Math.random()*200);
-
-activity.innerHTML+=`<p style="color:orange">${names[Math.floor(Math.random()*names.length)]} earned $${amt}</p>`;
-},4000);
-
-// AUTO LOGIN
-window.onload=function(){
-let u=localStorage.getItem("loggedUser");
-if(u && users[u]){
-update(u);
-show("home");
-}
-}
-
-</script>
+<footer>
+  <p>© 2026 Nasdaq Trade - All Rights Reserved</p>
+</footer>
 
 </body>
 </html>

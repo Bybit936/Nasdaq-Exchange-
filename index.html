@@ -8,7 +8,7 @@
 body {
   margin: 0;
   font-family: Arial;
-  background: #0b0e11;
+  background: #000000;
   color: white;
 }
 
@@ -17,30 +17,31 @@ header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 15px 20px;
+  padding: 20px;
 }
 
 header h2 {
-  margin: 0;
+  font-size: 22px;
 }
 
 nav a {
   margin-left: 15px;
   text-decoration: none;
   color: white;
-  font-size: 14px;
+  font-size: 15px;
 }
 
 .signup-btn {
-  background: #fcd535;
+  background: #ff8c00;
   color: black !important;
-  padding: 6px 12px;
-  border-radius: 5px;
+  padding: 8px 14px;
+  border-radius: 6px;
+  font-weight: bold;
 }
 
-/* HERO FULL SCREEN */
+/* HERO */
 .hero {
-  min-height: 80vh;
+  min-height: 90vh;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -49,54 +50,62 @@ nav a {
 }
 
 .hero h1 {
-  font-size: 32px;
+  font-size: 36px;
   text-align: center;
-  margin-bottom: 10px;
+  margin-bottom: 15px;
 }
 
 .hero p {
-  font-size: 16px;
-  margin-bottom: 20px;
+  font-size: 18px;
+  margin-bottom: 25px;
   text-align: center;
 }
 
+/* BUTTONS */
 .buttons {
   display: flex;
-  gap: 10px;
+  gap: 15px;
 }
 
 button {
-  padding: 12px 25px;
+  padding: 14px 30px;
   border: none;
   cursor: pointer;
-  font-size: 15px;
-  border-radius: 5px;
+  font-size: 16px;
+  border-radius: 6px;
 }
 
 .signup {
-  background: #fcd535;
+  background: #ff8c00;
   color: black;
+  font-weight: bold;
 }
 
 .login {
-  background: #2b3139;
+  background: #222;
   color: white;
 }
 
 /* FEATURES */
 .features {
-  padding: 40px 20px;
+  padding: 50px 20px;
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 15px;
+  gap: 20px;
 }
 
 .box {
-  background: #1c1f26;
-  padding: 20px;
+  background: #111;
+  padding: 25px;
   text-align: center;
-  border-radius: 10px;
-  font-size: 15px;
+  border-radius: 12px;
+  font-size: 16px;
+  transition: 0.3s;
+}
+
+.box:hover {
+  background: #ff8c00;
+  color: black;
 }
 
 /* FOOTER */
@@ -104,13 +113,13 @@ footer {
   text-align: center;
   padding: 20px;
   color: gray;
-  font-size: 13px;
+  font-size: 14px;
 }
 
 /* DESKTOP */
 @media(min-width:768px) {
   .hero h1 {
-    font-size: 45px;
+    font-size: 50px;
   }
 
   .features {

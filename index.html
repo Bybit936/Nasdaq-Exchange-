@@ -11,7 +11,26 @@ body {
   background: #000;
   color: white;
 }
+input {
+  width: 100%;
+  padding: 10px;
+  margin: 6px 0;
+  background: #000;
+  color: white;
+  border: none;
+  border-radius: 5px;
+}
 
+#authSection button {
+  width: 100%;
+  padding: 10px;
+  background: #ff8c00;
+  color: black;
+  border: none;
+  border-radius: 5px;
+  margin-top: 5px;
+  font-weight: bold;
+} cool
 /* CONTAINER */
 .container {
   max-width: 1100px;
@@ -158,7 +177,7 @@ footer {
   <nav>
   <a href="#">Markets</a>
   <a href="#">Trade</a>
-  <a href="signup.html" class="signup-btn">Sign Up</a>
+  <a href="#" class="signup-btn" onclick="scrollToAuth()">Sign Up</a>
 </nav>
 </header>
 
@@ -167,9 +186,8 @@ footer {
   <p>Deposit & Earn Profit Easily</p>
 
   <div class="buttons">
-    <button class="signup" onclick="window.location.href='signup.html'">Sign Up</button>
-
-<button class="login" onclick="window.location.href='signup.html'">Login</button>
+    <button class="signup" onclick="scrollToAuth()">Sign Up</button>
+<button class="login" onclick="scrollToAuth()">Login</button>
   </div>
 </section>
 
@@ -183,59 +201,41 @@ footer {
 <footer>
   <p>© 2026 Nasdaq Trade</p>
 </footer>
+  <!-- AUTH SECTION START -->
+<div id="authSection" style="max-width:400px; margin:50px auto; background:#111; padding:20px; border-radius:10px;">
+
+<h2 style="text-align:center;">Sign Up</h2>
+
+<input type="text" id="name" placeholder="Full Name">
+<input type="email" id="email" placeholder="Email">
+<input type="password" id="password" placeholder="Password">
+<input type="password" id="confirm" placeholder="Confirm Password">
+<input type="text" id="ref" value="Jasaara@" placeholder="Referral Code">
+
+<button onclick="sendOTP()">Send OTP</button>
+
+<div id="otpBox" style="display:none;">
+  <input type="text" id="otp" placeholder="Enter OTP">
+  <button onclick="verifyOTP()">Verify & Signup</button>
+</div>
+
+<div>
+  <input type="checkbox" id="terms"> I agree to Terms
+</div>
+
+<hr>
+
+<h2 style="text-align:center;">Login</h2>
+
+<input type="email" id="loginEmail" placeholder="Email">
+<input type="password" id="loginPass" placeholder="Password">
+
+<button onclick="login()">Login</button>
 
 </div>
-<script>
-let generatedOTP = "";
+<!-- AUTH SECTION END -->
 
-function scrollToAuth() {
-  document.getElementById("authSection").scrollIntoView({ behavior: "smooth" });
-}
-
-function sendOTP() {
-  let pass = document.getElementById("password").value;
-  let confirm = document.getElementById("confirm").value;
-  let terms = document.getElementById("terms").checked;
-
-  if (pass !== confirm) return alert("Password not match");
-  if (!terms) return alert("Accept Terms");
-
-  generatedOTP = "1234";
-  alert("OTP: 1234");
-
-  document.getElementById("otpBox").style.display = "block";
-}
-
-function verifyOTP() {
-  let otp = document.getElementById("otp").value;
-
-  if (otp == generatedOTP) {
-    let user = {
-      email: document.getElementById("email").value,
-      password: document.getElementById("password").value
-    };
-
-    localStorage.setItem("user", JSON.stringify(user));
-    alert("Signup Successful!");
-  } else {
-    alert("Wrong OTP");
-  }
-}
-
-function login() {
-  let email = document.getElementById("loginEmail").value;
-  let pass = document.getElementById("loginPass").value;
-
-  let saved = JSON.parse(localStorage.getItem("user"));
-
-  if (!saved) return alert("Please signup first");
-
-  if (email === saved.email && pass === saved.password) {
-    alert("Login Successful!");
-  } else {
-    alert("Wrong email or password");
-  }
-}
+</div>
 <script>
 let generatedOTP = "";
 
@@ -290,36 +290,3 @@ function login() {
 </script>
 </body>
 </html>
-<!-- AUTH SECTION START -->
-<div id="authSection" style="max-width:400px; margin:50px auto; background:#111; padding:20px; border-radius:10px;">
-
-<h2 style="text-align:center;">Sign Up</h2>
-
-<input type="text" id="name" placeholder="Full Name">
-<input type="email" id="email" placeholder="Email">
-<input type="password" id="password" placeholder="Password">
-<input type="password" id="confirm" placeholder="Confirm Password">
-<input type="text" id="ref" value="Jasaara@" placeholder="Referral Code">
-
-<button onclick="sendOTP()">Send OTP</button>
-
-<div id="otpBox" style="display:none;">
-  <input type="text" id="otp" placeholder="Enter OTP">
-  <button onclick="verifyOTP()">Verify & Signup</button>
-</div>
-
-<div>
-  <input type="checkbox" id="terms"> I agree to Terms
-</div>
-
-<hr>
-
-<h2 style="text-align:center;">Login</h2>
-
-<input type="email" id="loginEmail" placeholder="Email">
-<input type="password" id="loginPass" placeholder="Password">
-
-<button onclick="login()">Login</button>
-
-</div>
-<!-- AUTH SECTION END -->

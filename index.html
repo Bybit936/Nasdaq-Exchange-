@@ -177,7 +177,7 @@ footer {
   <nav>
   <a href="#">Markets</a>
   <a href="#">Trade</a>
-  <a href="#" class="signup-btn" onclick="scrollToAuth()">Sign Up</a>
+  <a href="#" class="signup-btn" onclick="event.preventDefault(); scrollToAuth();">Sign Up</a>
 </nav>
 </header>
 
@@ -238,11 +238,9 @@ footer {
 </div>
 <script>
 let generatedOTP = "";
-
-function scrollToAuth() {
+  function scrollToAuth() {
   document.getElementById("authSection").scrollIntoView({ behavior: "smooth" });
-}
-
+  }
 function sendOTP() {
   let pass = document.getElementById("password").value;
   let confirm = document.getElementById("confirm").value;
@@ -250,11 +248,10 @@ function sendOTP() {
 
   if (pass !== confirm) return alert("Password not match");
   if (!terms) return alert("Accept Terms");
-
   generatedOTP = Math.floor(1000 + Math.random() * 9000);
-alert("Your OTP: " + generatedOTP);
+alert("Your OTP: " + generatedOTP);}
 
-  document.getElementById("otpBox").style.display = "block";
+  document.getElementById("otpBox").style.display = "block"; up
 }
 function verifyOTP() {
   let otp = document.getElementById("otp").value;
@@ -284,13 +281,12 @@ function verifyOTP() {
     };
 
     let users = JSON.parse(localStorage.getItem("users")) || [];
-user.push(user);
+users.push(user);
 localStorage.setItem("users", JSON.stringify(users));
 localStorage.setItem("currentUser", JSON.stringify(user));
 showDashboard(user);
     } else {
   alert("Wrong OTP");
-}
 }
 
  
